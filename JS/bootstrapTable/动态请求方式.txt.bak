@@ -1,0 +1,12 @@
+
+可以动态的为bootstrapTable的url,以及参数或者是其他的一些属性赋值
+
+var opt = {
+	url: ctx + 'base/detector/query',
+	silent: true,
+	query:{
+	    id:id
+	}
+    };
+
+$('#detectorTable').bootstrapTable("refresh", opt);

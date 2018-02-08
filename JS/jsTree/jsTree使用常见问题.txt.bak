@@ -1,0 +1,30 @@
+
+1、前端显示有一个固定的格式，所以要想动态的获取数据需要将数据封装成JsTree能够识别的格式
+
+2、在父子节点的关系维持上，只要B节点的parent的值为A节点的id值，A即为B的父节点，同时需要注意的是所有节点id值不同能够相同，否者会出现问题
+   多张表数据的节点关联上，只要能够维持父子节点关系即可生成树状结构
+
+3、关于节点模糊匹配 {详细介绍地址：http://blog.csdn.net/qq_34050009/article/details/71108605}
+   可以使用插件  "plugins": [ //插件  
+                        "search", //允许插件搜索  
+                        "sort", //排序插件  
+                        "state", //状态插件  
+                        "types", //类型插件  
+                        "unique", //唯一插件  
+                        "wholerow" //整行插件  
+                        ],  
+	然后
+
+	//查询 节点名称  
+	var to = false;  
+	function searchCross() {
+		/* var $tree = $('#areaTree').jstree(true); */
+		if(to) {
+			clearTimeout(to);  
+		}
+		to = setTimeout(function() {  
+		    $tree.jstree(true).search($('#crossNameCondition').val()); //开启插件查询后 使用这个方法可模糊查询节点  
+
+		}, 250); 
+	}
+               

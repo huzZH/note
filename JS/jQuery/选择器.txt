@@ -1,0 +1,43 @@
+通过name值获取value
+$("input[name = 'roleId']").val();
+
+根据属性值获取value
+$("input[attr = 'attrName']").val();
+
+获取target属性值为_blank的a标签，获取属性值
+$("a[target='_blank']").attr("href");
+
+获取target属性值为_blank的a标签，设置属性值
+$("a[target='_blank']").attr("href", "www.baidu.com")
+
+筛选class为info的dom元素集合，并且筛选集合中的第一个元素, 最后一个元素
+$(".info:first")  $(".info:last)
+
+表单选择器
+获取所有的input ，textarea，select，button元素
+$(":input")
+获取所有的单行文本框
+$(":text")
+获取所有的密码文本框
+$(":password")
+获取所有的单选框
+$(":radio")
+获取所有的复选框
+$(":checkbox")
+获取所有的提交按钮
+$(":submit")
+获取所有的图像域（仅仅是input中type类型为image，不包括image标签）
+$(":image")
+获取所有的重置按钮
+$(":reset")
+获取所有的button按钮（包括button标签）
+$(":button")
+
+筛选class为info的dom元素集合，并且筛选集合中索引为奇数的元素，索引为偶数的元素
+$(".info:odd")	$(".info:even")
+
+$(".info:eq(2)")筛选集合中索引为2的元素集合
+
+$(".info:lt(2)")筛选集合中索引小于2的元素集合
+
+$(".info:gt(2)")筛选集合中索引大于2的元素集合

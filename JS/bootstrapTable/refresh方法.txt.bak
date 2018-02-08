@@ -1,0 +1,15 @@
+
+可以动态的加载指定的URL来获取数据
+为了能够动态的制定bootstrapTable的url,以及参数或者是其他的一些属性，可以使用以下方式
+
+var opt = {
+	url: ctx + 'base/detector/query',
+	silent: true,
+	query:{
+	    id:id,
+	    level:num
+
+	}
+    };
+
+$('#detectorTable').bootstrapTable("refresh", opt);

@@ -1,0 +1,15 @@
+关于使用Enter事件
+如果对象是整个dom下，则事例如下（注：焦点必须在输入框之外）
+	$(document).keydown(function(event){ 
+		if(event.keyCode==13){ 
+			$("#mouse").click(); 
+		} 
+	}); 
+若想要焦点在输入框的情况下使用Enter，则需要使用onkeypress事件
+事例如下：
+<input type="text" id="crossNameCondition" onkeypress="if(event.keyCode==13) {searchCross.click();return false;}" name="crossName">
+<button id="searchCross" class="btn" type="button" onclick="searchCross()">
+
+关于DOM事件，详情：http://www.w3school.com.cn/jsref/dom_obj_event.asp
+										
+										

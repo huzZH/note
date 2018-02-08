@@ -1,0 +1,17 @@
+
+$("#areaTree").jstree({
+	'core' : {
+		"multiple" : true,
+		"animation" : 0,
+		"data" : {
+			"url" : ctx + "base/detector/treeData?roleId = " + 1,
+			"dataType" : "json"
+		}
+	},
+	'plugins' : [ "types", "wholerow" ],
+	"types" : {
+		'default' : {
+			'icon' : false
+		},
+	},
+});

@@ -1,0 +1,20 @@
+
+可以动态的加载指定的URL来获取数据
+为了能够动态的制定bootstrapTable的url,以及参数或者是其他的一些属性，可以使用以下方式
+
+var opt = {
+	url: ctx + 'base/detector/query',
+	silent: true,
+	query:{
+	    id:id,
+	    level:num
+
+	}
+    };
+
+$('#detectorTable').bootstrapTable("refresh", opt);
+
+网上的问题：
+	refresh不能改变table默认的数据url，当refresh后动态更新指定url数据，但是当你点击table的页数按钮时会重新调用初始的url去获取数据
+
+	找到的一种解决方案：bootstrapTable('destroy').bootstrapTable() 先进行destroy然后再重新初始化

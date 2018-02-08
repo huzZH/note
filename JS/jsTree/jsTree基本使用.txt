@@ -1,0 +1,519 @@
+引入脚本
+需要引入3个脚本文件: 
+1. jQuery (>= 1.9.1) 
+2. 一个jstree主题 (默认只有一个主题) 
+3. jstree资源文件
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.3/themes/default/style.min.css" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.3/jstree.min.js"></script>
+
+If you decide to host jstree yourself - the files are located in the dist folder. You can safely ignore the dist/libs folder.
+
+用html标签定义树
+最简单的定义方法是用写死在HTML中.你只需要用jquery选择要渲染成jstree的dom元素，然后调用 .jstree()渲染就可以了。 也可以用 $.jstree.create(element) 的方式渲染。
+
+<div id="container">
+  <ul>
+    <li>Root node
+      <ul>
+        <li>Child node 1</li>
+        <li>Child node 2</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<script>
+$(function() {
+  $('#container').jstree();
+});
+</script>
+
+查看代码执行结果
+
+jstree支持用data-*属性来设置选项:
+
+<li data-jstree='{ "selected" : true, "opened" : true }'>Root node ...
+1
+用js数组或者JSON格式定义树
+HTML定义方法比较简单, 但不够灵活，所以提供了更为灵活的JS方法:
+
+<div id="container"></div>
+<script>
+$(function() {
+  $('#container').jstree({
+    'core' : {
+      'data' : [
+        { "text" : "Root node", "children" : [
+            { "text" : "Child node 1" },
+            { "text" : "Child node 2" }
+          ]
+        }
+      ]
+    }
+  });
+});
+</script>
+
+查看代码执行结果
+
+与前面HTML的例子不同的是， 往.jstree() 传入一个config对象参数.
+
+注意了，jstree会试图解析core.data 定义的任何数据，用来构造成树节点。如果不设置core.data属性，jstree就会试着解析HTML的树节点.
+
+JSON数据的固定格式
+提供的JSON数据必须符合一定的格式, 每个对象对应一个节点,如果该节点有子节点，还需要提供children属性。children属性是一个相同格式的对象数组。
+
+注意, 假如一个对象只有text属性时，你也可以用字符串替换该对象，而该字符串就是text属性的值, 所以上面的例子也可以这么写:
+
+[ { "text" : "Root node", "children" : [ "Child node 1", "Child node 2" ] } ]
+1
+节点对象中，还提供了一些可选的配置:
+
+id - 这个ID会在对应的‘LI’ 节点上设置html标签的ID属性. 请确保ID的唯一性，每个节点的ID都应该不一样，否则会有出现一些莫名其妙的问题.
+icon - 节点图标，可以设置表示路径、一个或者多个CSS类名、字体图标的字符串.
+data - 任何数据，设置这个属性没有任何UI上的效果，任何时候都可以读写这个数据.
+state - 对象类型，一个节点的状态有一下几种: 
+selected - 节点处于被选中状态
+opened - 节点处于打开状态
+disabled - 节点不可选
+checked - 用于checkbox插件 - 勾选该checkbox(只有当 tie_selection 处于 false时有效)
+undetermined - 用于checkbox插件 - 状态待定 (只有启用懒加载并且节点没有被加载时生效).
+type - 用于types插件 - 用来定义节点类型，默认为 "default" 类型.
+li_attr -包含DOM属性的对象， 会追加到该节点对应的LI标签.
+a_attr - -包含DOM属性的对象， 会追加到该节点对应的A标签.
+一个包含可选属性的DEMO:
+
+<div id="container"></div>
+<script>
+$(function() {
+  $('#container').jstree({
+    'core' : {
+      'data' : [
+          {
+              "text" : "Root node",
+              "state" : {"opened" : true },
+              "children" : [
+                  {
+                    "text" : "Child node 1",
+                    "state" : { "selected" : true },
+                    "icon" : "glyphicon glyphicon-flash"
+                  },
+                  { "text" : "Child node 2", "state" : { "disabled" : true } }
+              ]
+        }
+      ]
+    }
+  });
+});
+</script>
+
+查看代码执行结果
+
+用AJAX定义树
+看一个具体的AJAX DEMO
+
+<div id="container"></div>
+<script>
+$(function() {
+  $('#container').jstree({
+    'core' : {
+      'data' : {
+        "url" : "//www.jstree.com/fiddle/",
+        "dataType" : "json" // needed only if you do not supply JSON headers
+      }
+    }
+  });
+});
+</script>
+
+后端返回数据:
+
+[{
+  "id":1,"text":"Root node","children":[
+    {"id":2,"text":"Child node 1"},
+    {"id":3,"text":"Child node 2"}
+  ]
+}]
+
+查看代码执行结果
+
+除了给core.data设置数组类型的数据之外，还可以设置一个jQuery AJAX config对象. 
+jsTree会获取设置的URL数据（格式跟前面的JSON格式相同）,并显示.
+
+If you cannot provide proper JSON headers, set core.data.dataType to "json".
+
+The ids in the server response make it possible to identify nodes later (which we will see in the next few demos), but they are not required.
+
+请确保IDS的唯一性
+
+用AJAX和lazy loading（懒加载）来定义树
+Lazy loading（懒加载）意味只按需加载节点. 比如当你有大量的数据展示, 而一个请求会很占资源的时候. Lazy loading可以更快速的加载数据 - jstree 会在用户浏览到的时候发送AJAX请求获取节点数据.
+
+修改前面的例子, 用 lazy load加载 “Child node 1” 节点.
+
+<div id="container"></div>
+<script>
+$(function() {
+  $('#container').jstree({
+    'core' : {
+      'data' : {
+        "url" : "//www.jstree.com/fiddle/?lazy",
+        "data" : function (node) {
+          return { "id" : node.id };
+        }
+      }
+    }
+  });
+});
+</script>
+
+首次请求后端返回结果:
+
+[{
+  "id":1,"text":"Root node","children":[
+    {"id":2,"text":"Child node 1","children":true},
+    {"id":3,"text":"Child node 2"}
+  ]
+}]
+
+查看代码执行结果
+
+我们看看发生了什么. 首先是data对象中的 "data" 配置选项. 在jQuery中, 应该是string 或者object类型，而jstree拓展了一下，使其可以设置为function.
+
+每一次jstree需要请求AJAX的时候，就会调用这个function，并将正在打开的节点作为参数传给这个function，该方法的返回值作为AJAX的‘data’参数.为了更好理解，建议打开DEMO链接，查看控制台请求的信息。
+
+可以看到首次请求的链接为： 
+http://www.jstree.com/fiddle?lazy&id=#，其中 
+# 是一个比较特别的ID，这个ID表示jstree当前要加载的是根节点.
+
+打开root根节点,可以看到两个子节点，这个操作不会触发AJAX请求，因为这两个子节点的信息早已包含在首次请求中.
+
+往下看， “Child node 1” 节点处于关闭的状态（有一个折叠的图标），因为该节点的 "children"属性设置了 true. 这相当于告诉jstree,该节点将会触发lazy load.
+
+于是打开”Child node 1”节点，可以发现第二个请求: 
+http://www.jstree.com/fiddle?lazy&id=2， 
+ID =2 ，对应了”Child node 1”节点的ID，也是data属性设置的function返回的结果.
+
+后端返回数据:
+
+["Child node 3","Child node 4"]
+1
+你也可以把 "url" 设置为一个function效果和上面的"data"属性一样 - 每一次请求，都会调用该方法，并且将方法的返回值（字符串）作为API地址，进行访问. 这种方法适合这样的URL: http://example.com/get_children/1.
+
+用回调函数定义树
+有时候，你不想用jstree自带的AJAX请求数据，你希望用自己的AJAX或者其他的方式请求数据。这时候你就需要用回调函数 
+。
+
+<div id="container"></div>
+<script>
+$(function() {
+  $('#container').jstree({
+    'core' : {
+      'data' : function (node, cb) {
+        if(node.id === "#") {
+          cb([{"text" : "Root", "id" : "1", "children" : true}]);
+        }
+        else {
+          cb(["Child"]);
+        }
+      }
+    }
+  });
+});
+</script>
+
+查看代码执行结果
+
+该回调函数会接收两个参 - 当前需要加载数据的节点，以及获取完数据之后，结束加载的回调方法. 数据的格式跟之前的一样，用上AJAX后也有lazy load的效果.
+
+jstree事件
+jstree提供了许多事件，可以观察节点树发生了什么变化. 不管你用什么方式定义树，包含的事件都是一样的. 
+看一下最基本的 changed事件，该事件在选项改变的时候触发：
+
+<div id="container"></div>
+<script>
+$(function() {
+  $('#container').jstree({
+    'core' : {
+      'data' : [
+        {"id" : 1, "text" : "Node 1"},
+        {"id" : 2, "text" : "Node 2"},
+      ]
+    }
+  });
+  $('#container').on("changed.jstree", function (e, data) {
+    console.log("The selected nodes are:");
+    console.log(data.selected);
+  });
+});
+</script>
+
+查看代码执行结果
+
+所有的jstree事件都有一个叫 ".jstree" 的命名空间 - 比如我们监听的 "changed.jstree". 另外，事件回调处理函数，多了一个参数，这个参数包含了该事件的所有信息. 比如当前的例子， data.selected 是一个数组，它包含了所有选中的节点id (注意了, 如果你没有自定义节点的ID，这些ID是自动生成的).
+
+我们稍为拓展一下，取消ID的显示，改为在控制台打印选中节点的text属性。
+
+$('#container').on("changed.jstree", function (e, data) {
+  console.log(data.instance.get_selected(true)[0].text);
+  console.log(data.instance.get_node(data.selected[0]).text);
+});
+
+上面两行代码的做的事情是一样的，都是获取并打印第一个选中节点的text属性.
+
+为了方便调用jstree的方法， data 参数对象中有个instance 的属性，这个属性代表了这棵树的实例对象。
+
+更详细的方法和事件使用说明，请参考API文档
+
+jstree API
+前面的例子中，我们仅仅使用了jstree最粗浅的功能. 
+下面我们试着获取jstree的实例，并调用实例的方法.
+
+<button>Select node 1</button>
+<div id="container"></div>
+<script>
+$(function() {
+  $('#container').jstree({
+    'core' : {
+      'data' : [
+        {"id" : 1, "text" : "Node 1"},
+        {"id" : 2, "text" : "Node 2"},
+      ]
+    }
+  });
+  $('button').on("click", function () {
+    var instance = $('#container').jstree(true);
+    instance.deselect_all();
+    instance.select_node('1');
+  });
+});
+</script>
+
+查看代码执行结果
+
+上面的例子说明了怎么获取jstree的实例（还是用选择器，只不过，参数变成了布尔值 true）以及调用了两个方法，最后一个方法是选中id=1的节点.
+
+还可以这样调用方法:
+
+$('#container').jstree("select_node", "1");
+1
+更详细的方法和事件使用说明，请参考API文档
+
+更多配置
+前面定义树的时候，我们已经覆盖了大部分的配置场景.
+
+$("#tree").jstree({ /* config object goes here */ });
+1
+config对象的每一个属性，都对应着一种插件.而属性的值的配置，是专门给该插件提供的.此外还有两个特别的属性"core" 和 "plugins": 
+* "core" 存放着核心的配置。 
+* "plugins" 是一个数组，包含了当前要激活的各个插件的字符串名称.
+
+记住，我们需要配置的仅仅是不同于默认配置的那一部分选项.
+
+更详细的方法和事件使用说明，请参考API文档
+
+$("#tree").jstree({
+  "core" : { // 核心的配置
+    "multiple" : false, // 单选
+    "themes" : {
+      "dots" : false // no connecting dots between dots
+    }
+  },
+  "plugins" : ["state"] // 激活‘state’插件
+});
+
+查看代码执行结果
+
+后面我们还会介绍所有其他的插件.
+
+注意，默认情况下，所有的修改操作都是不启用的.像拖放,新增，修改，删除这样的功能，需要你配置启用.
+
+$("#tree").jstree({
+  "core" : {
+    "check_callback" : true, // enable all modifications
+  },
+  "plugins" : ["dnd","contextmenu"]
+});
+
+查看代码执行结果
+
+"core.check_callback"也可以设置成一个函数，每一次尝试修改都会触发该函数. 函数的返回值为true时，才允许修改，返回false 意味着拒绝修改.
+
+operation（操作）参数有 create_node, rename_node, delete_node, move_node 和 copy_node几种.
+
+more参数由触发修改确认函数的插件所决定.比如DND插件的more的是一个包含move或者copy操作（前、后、操作中）的信息，像是否是多选， 移动到哪个节点的上方，插入点在哪等.
+
+$("#tree").jstree({
+  "core" : {
+    "check_callback" : function (operation, node, parent, position, more) {
+      if(operation === "copy_node" || operation === "move_node") {
+        if(parent.id === "#") {
+          return false; // prevent moving a child above or below the root
+        }
+      },
+      return true; // allow everything else
+    }
+  },
+  "plugins" : ["dnd","contextmenu"]
+});
+
+查看代码执行结果
+
+more 参数还包含了确认操作想过的其他信息.
+
+举个例子: 在拖拽节点的时候move_node 和 copy_node 操作会重复的触发.假如确认操作是 dnd 插件触发的， more会包含一个 dnd 的属性,其 值会被设置为true. 
+你可以通过检查 more.dnd属性，来判断是不是dnd 触发了确认操作.
+
+If you only want to perform an operation when a node is really about to be dropped check for more.core.
+
+插件
+jsTree提供了几个插件, 不过如果只是在"plugins"属性中激活了插件，也仅仅是修改了树。下面是每种插件的简要描述。 更多的配置信息，可以参考API文档.
+
+checkbox
+在每个节点前渲染一个checkbox的图标，用来跟好的标记多选。 插件提供了”tri-state” 的选项，当该节点的子节点只有部分选中的时候，会变成 一个”square”方格图标.
+
+Keep in mind that if any sort of cascade is enabled, disabled nodes may be checked too (not by themselves, but for example when a parent of a disabled node is checked and selection is configured to cascade down).
+
+$("#tree").jstree({
+  "plugins" : ["checkbox"]
+});
+
+查看代码执行结果
+
+contextmenu
+当点击鼠标右键时，显示右键菜单，菜单中的操作都是可以配置的.
+
+$("#tree").jstree({
+  "core" : { "check_callback" : true }, // so that modifying operations work
+  "plugins" : ["contextmenu"]
+});
+
+查看代码执行结果
+
+dnd
+提供拖放功能，重现整理树节点
+
+$("#tree").jstree({
+  "core" : { "check_callback" : true }, // so that operations work
+  "plugins" : ["dnd"]
+});
+
+查看代码执行结果
+
+massload
+lazy loaded的一种，为了将一个AJAX中加载的数据，放入多个到节点。只用core.data时，AJAX每次加载的数据，只是放在一个节点下.
+
+$("#tree").jstree({
+  "core" : {
+    "data" : { .. AJAX config .. }
+  },
+  "massload" : {
+    "url" : "/some/path",
+    "data" : function (nodes) {
+      return { "ids" : nodes.join(",") };
+    }
+  },
+  "plugins" : [ "massload", "state" ]
+});
+
+search
+提供搜索功能，并只显示匹配到的节点。因为可以使用AJAX / callback构造,所以搜索可以支持lazy loaded的节点.
+
+<form id="s">
+  <input type="search" id="q" />
+  <button type="submit">Search</button>
+</form>
+<script>
+$("#container").jstree({
+  "plugins" : ["search"]
+});
+$("#s").submit(function(e) {
+  e.preventDefault();
+  $("#container").jstree(true).search($("#q").val());
+});
+</script>
+
+查看代码执行结果
+
+sort
+节点排序功能，可以在配置中提供自定义的排序方法或者默认启用字母表排序.
+
+$("#tree").jstree({
+  "plugins" : ["sort"]
+});
+
+查看代码执行结果
+
+state
+保存用户所浏览节点的状态，便于切换会相同的树时，恢复选中的状态.
+
+$("#tree").jstree({
+  // the key is important if you have multiple trees in the same domain
+  "state" : { "key" : "state_demo" },
+  "plugins" : ["state"]
+});
+
+查看代码执行结果
+
+types
+给节点增加一个类型.主要是为了便于控制和维护相同的type节点的配置。 节点设置type属性时，匹配types对象中相同的属性.
+
+$("#tree").jstree({
+  "types" : {
+    "default" : {
+      "icon" : "glyphicon glyphicon-flash"
+    },
+    "demo" : {
+      "icon" : "glyphicon glyphicon-ok"
+    }
+  },
+  "plugins" : ["types"]
+});
+
+查看代码执行结果
+
+unique
+命名唯一，不允许在同一级下有命名相同的节点. 当移动到的parent节点下，存在同名的节点时，不允许移动.
+
+$("#tree").jstree({
+  "plugins" : ["unique"]
+});
+
+查看代码执行结果
+
+wholerow
+把每个节点作为一行，便于选中。节点过多时，在旧的浏览器上会有性能问题.
+
+$("#tree").jstree({
+  "plugins" : ["wholerow"]
+});
+
+查看代码执行结果
+
+其他插件
+如果你需要定义自己的插件或者下载第三方插件，你需要在相应的页面引入该资源文件，并且在"plugins"属性中激活.
+
+// conditional select
+(function ($, undefined) {
+  "use strict";
+  $.jstree.defaults.conditionalselect = function () { return true; };
+  $.jstree.plugins.conditionalselect = function (options, parent) {
+    this.activate_node = function (obj, e) {
+      if(this.settings.conditionalselect.call(this, this.get_node(obj))) {
+        parent.activate_node.call(this, obj, e);
+      }
+    };
+  };
+})(jQuery);
+$("#tree").jstree({
+  "conditionalselect" : function (node) {
+    return node.text === "Root node" ? false : true;
+  },
+  "plugins" : ["conditionalselect"]
+});
+
+查看代码执行结果
+
+就像你看到的,当新建一个插件时，你可以定义一个默认的配置,给jstree增加你的方法,或者覆盖现有的方法.

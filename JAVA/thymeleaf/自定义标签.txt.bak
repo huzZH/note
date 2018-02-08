@@ -1,0 +1,103 @@
+首先，要有一个概念就是使用的标签是可以自定义的，只需要实现对应的接口就行，，因为所有的标签都有其对应definition，以及handler，
+以上实现后注册一个handler即可
+
+关于thymeleaf模板自定义
+1、实现AbstractProcessorDialect接口，自定义自己的模板标签tag，同时注册自己的标签处理，即handler
+
+	public class DictDialect extends AbstractProcessorDialect {
+		private static final String NAME = "dict dialect";
+		//标签前缀
+		private static final String PREFIX = "dict";
+		//猜测在遍历标签的时候是获取所有标签然后循环遍历，这样就能够获取到自定义的标签
+		public DictDialect() {
+			super(NAME, PREFIX, StandardDialect.PROCESSOR_PRECEDENCE);
+		}
+		//创建标签处理Handler
+		@Override
+		public Set<IProcessor> getProcessors(String dialectPrefix) {
+			 return createStandardProcessorsSet(dialectPrefix);
+		}
+		
+		private static Set<IProcessor> createStandardProcessorsSet(String dialectPrefix) {
+			final Set<IProcessor> processors = new HashSet<IProcessor>();
+			processors.add(new DictShowProcessor(dialectPrefix));
+			processors.add(new DictSelectProcessor(dialectPrefix));
+			return processors;
+		 }
+	}
+2、定义自己的标签名，以及处理标签对应的处理方法（从源码上发现所有的标签都对应着一个类，即各自有各自的处理方式）
+	public class DictSelectProcessor extends AbstractElementTagProcessor {
+		Logger logger=LoggerFactory.getLogger(getClass());
+		private static final String TAG_NAME = "select";// 标签名
+		private static final int PRECEDENCE = 300;
+		private static final String DICT_CODE = "code";// 字典编码
+		private static final String DICT_VALUE = "value";// 字典编码   已选中
+		private static final String CLS="class";//样式
+		private static final String NAME="name";//form name
+		private static final String ID="id";//form id
+		public DictSelectProcessor(String dialectPrefix) {
+			super(TemplateMode.HTML, dialectPrefix, TAG_NAME, true, null, false, PRECEDENCE);
+
+		}
+		//标签处理方法（关于在页面上的属性，IProcessableElementTag都是可以根据具体的属性名获取到，属性名可以任意）
+		@Override
+		protected void doProcess(ITemplateContext context, IProcessableElementTag tag,
+				IElementTagStructureHandler structureHandler) {
+
+			String code = tag.getAttribute(DICT_CODE).getValue();
+			IAttribute valueAttr= tag.getAttribute(DICT_VALUE);
+			IAttribute clsAttr= tag.getAttribute(CLS);
+			IAttribute nameAttr= tag.getAttribute(NAME);
+			IAttribute idAttr= tag.getAttribute(ID);
+			final IEngineConfiguration configuration = context.getConfiguration();
+			final IStandardExpressionParser parser = StandardExpressions.getExpressionParser(configuration);
+			String realvalue="";
+			if(valueAttr!=null){
+				final IStandardExpression valueexpression = parser.parseExpression(context, valueAttr.getValue());
+				   realvalue =  String.valueOf( valueexpression.execute(context));
+				
+				if(logger.isDebugEnabled()) {
+					logger.debug("dict== code:{},value:{},realvalue:{}",code,valueAttr.getValue(),realvalue);
+				}
+			}
+			ApplicationContext appCtx = SpringContextUtils.getApplicationContext(context);
+			SysDictService sysDictService=	appCtx.getBean(SysDictService.class);
+			List<SysDict> dicts=sysDictService.getDictByType(code);
+			StringBuffer options=new StringBuffer();
+			String selected="";
+			for(SysDict dict:dicts){
+				if(valueAttr!=null&&realvalue.equals(dict.getValue())){
+					selected=" selected=selected ";
+				}else{
+					selected="";
+				}
+				options.append("<option value=\""+dict.getValue()+"\" "+selected+">"+dict.getLabel()+"</option>");
+			}
+			StringBuffer select=new StringBuffer("<select");
+				if(clsAttr!=null){
+					select.append(" class=\""+clsAttr.getValue()+"\"");
+				}
+				if(nameAttr!=null){
+					select.append(" name=\""+nameAttr.getValue()+"\"");
+				}
+				if(idAttr!=null){
+					select.append("  id=\""+idAttr.getValue()+"\"");
+				}
+				select .append(">");
+				select.append(options);
+				select.append("<select>");
+				
+			structureHandler.replaceWith(select.toString(), false);
+		}
+	}
+3、向spring注册自己的DictDialect
+   可以采用JavaConfig的形式
+	@Configuration
+	public class DialectConfig {
+
+	    @Bean
+	    public DictDialect getDictDialect() {
+		return new DictDialect();
+	    }
+
+	}
