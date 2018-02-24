@@ -1,0 +1,7 @@
+var array = [];
+
+var array = new Array();
+
+var array = new Array(arg1, arg2);
+
+array.push("");

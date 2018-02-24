@@ -1,0 +1,43 @@
+#nav_left li {
+	margin: 0;
+}
+
+#nav_left li a {
+	border-bottom: 0;
+}
+
+#gisLog a {
+	border: 1px solid rgb(197, 208, 220);
+}
+
+#gisLog li {
+	border-style: none;
+}
+
+#menu-left {
+	padding-left: 0px;
+	padding-top: 0;
+	padding-right: 20px;
+	height: 350px;
+	overflow: auto;
+	border-right: 1px solid rgb(197, 208, 220);
+}
+
+#content_right {
+	padding-top: 0;
+	padding-right: 0px;
+	height: 336px;
+}
+
+#content_right:first-child {
+	margin-bottom: 0;
+}
+
+#content_right .panel-body {
+	padding: 0;
+}
+
+#content {
+	height: 100%;
+	width: 100%;
+}

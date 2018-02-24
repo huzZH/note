@@ -1,0 +1,62 @@
+	<div class="main-container">
+		<div class="main-content-inner">
+			<div class="page-content">
+				<div class="row">
+
+					<div id="menu-left" class="page-content col-sm-3 col-xs-12">
+
+						<ul id="nav_left" class="nav nav-tabs nav-stacked">
+							<li><a href="#" class="menu"> <i class="glyphicon glyphicon-th-large"></i>路口渠化
+							</a></li>
+
+							<li><a href="#" class="menu"> <i
+									class="glyphicon glyphicon-credit-card"></i>路口流量
+							</a></li>
+							<li><a href="#" class="menu"> <i class="glyphicon glyphicon-globe"></i>交通管制
+							</a></li>
+							<li><a href="#" class="menu"> <i class="glyphicon glyphicon-calendar"></i>相位锁定
+							</a></li>
+							<li><a href="#gisLog" class="nav-header collapsed"
+								data-toggle="collapse"> <i class="glyphicon glyphicon-cog"></i>
+									日志查询 <span class="pull-right glyphicon glyphicon-chevron-down"></span>
+							</a>
+								<ul id="gisLog" class="nav nav-list collapse secondmenu">
+
+									<li><a href="#" class="menu"><i
+											class="glyphicon glyphicon-asterisk"></i>管控日志</a></li>
+
+									<li><a href="#" class="menu"><i class="glyphicon glyphicon-th-list"></i>方案下发日志</a></li>
+									<li><a href="#" class="menu"><i class="glyphicon glyphicon-user"></i>信号机上线日志</a></li>
+								</ul></li>
+
+							<li><a href="#" class="menu"> <i class="glyphicon glyphicon-fire"></i>
+									方案控制方式
+							</a></li>
+
+							<li><a href="#" class="menu"> <i class="glyphicon glyphicon-fire"></i>方案详细信息
+							</a></li>
+
+							<li><a href="#" class="menu"> <i class="glyphicon glyphicon-fire"></i>方案相位倒计时
+							</a></li>
+
+							<li><a href="#" class="menu"> <i class="glyphicon glyphicon-fire"></i>方案配时修改下发
+							</a></li>
+
+						</ul>
+					</div>
+					<div id="content_right" class="page-content col-sm-9 col-xs-12">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title" id="panel_name">路口渠化</h3>
+							</div>
+							<div class="panel-body">
+
+								<!-- content -->
+								<div id="content"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
