@@ -1,0 +1,34 @@
+使用JS的定时器每隔几秒向后端发送消息，若收到消息，则心跳保持，若没有收到消息，则可能是出现问题导致心跳断开
+
+var heartCheck = {
+    timeout: 60000,//60ms
+    timeoutObj: null,
+    serverTimeoutObj: null,
+    reset: function(){
+        clearTimeout(this.timeoutObj);
+        clearTimeout(this.serverTimeoutObj);
+　　　　 this.start();
+    },
+    start: function(){
+        var self = this;
+        this.timeoutObj = setTimeout(function(){
+            ws.send("HeartBeat");
+            self.serverTimeoutObj = setTimeout(function(){
+                ws.close();//如果onclose会执行reconnect，我们执行ws.close()就行了.如果直接执行reconnect 会触发onclose导致重连两次
+            }, self.timeout)
+        }, this.timeout)
+    },
+}
+
+ws.onopen = function () {
+   heartCheck.start();
+};
+ws.onmessage = function (event) {
+    heartCheck.reset();
+}
+ws.onclose = function () {
+    reconnect();
+};
+ws.onerror = function () {
+    reconnect();
+};
