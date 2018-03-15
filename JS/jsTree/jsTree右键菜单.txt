@@ -1,0 +1,50 @@
+它其实是对每个节点（node）设置右键菜单的（context），这是在加载的时候完成的，也就是加载之后就不会改变，除非修改源码，
+也就是我们加载时候就应该区别不同节点应该是什么右键菜单（context），这时候我们可以将节点进行分类，可以使用jstree的插件 types来进行分类，
+对不同类采用不同右键菜单。
+
+在项目里我使用的是node.id,只要能够有区分不同的菜单的属性即可
+
+
+<script type="text/javascript">  
+$('#jstree').jstree({  
+    'core' :{  
+        'data' : [  
+                  { "id" : "ajson1", "parent" : "#", "text" : "Simple root node","type":"level_1" },  
+                  { "id" : "ajson2", "parent" : "#", "text" : "Root node 2","type":"level_1"  },  
+                  { "id" : "ajson3", "parent" : "ajson2", "text" : "Child 1","type":"level_2"  },  
+                  { "id" : "ajson4", "parent" : "ajson2", "text" : "Child 2" ,"type":"level_2" },  
+               ]  
+    },  
+    'contextmenu' : {  
+        'items' : customMenu     //每个节点都会调用这个函数  
+    },  
+    'plugins' : ['contextmenu', 'types'],  
+    'types' : {  
+        '#' : {  },  
+        'level_1' : {  },  
+        'level_2' : { }  
+         
+    }  
+});  
+function customMenu(node)  
+{  
+    var items = {  
+        'item1' : {  
+            'label' : '父节点',  
+            'action' : function () { /* 写点击处理函数 */ }  
+        },  
+        'item2' : {  
+            'label' : '子节点',  
+            'action' : function () { /*写点击处理函数*/ }  
+        }  
+    }  
+  
+    if (node.type === 'level_1') {  
+        delete items.item2;  //删除节点 items  
+    } else if (node.type === 'level_2') {  
+        delete items.item1;  //删除节点 items  
+    }  
+  
+    return items;  
+}  
+</script>  

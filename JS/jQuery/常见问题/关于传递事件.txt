@@ -1,0 +1,2 @@
+在各个事件中，都有一个event参数值，这个参数里面包含了这个dom元素的所有属性，包括在界面中的位置等，其中$(event.target)就相当于$(this)
+因此在事件中可以从中获取一些属性，例如var text = event.target.text; 设置属性$(event.target).text("");

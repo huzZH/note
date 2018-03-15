@@ -1,0 +1,9 @@
+关于Post方法的请求方式：
+
+从网上查看到大小写的post 是有区别的，源码显示span style="font-size:18px;color:#ff0000;">
+data: this.options.contentType === 'application/json' && this.options.method === 'post' ?  JSON.stringify(data) : data,</span>
+               
+即当contentType：'application/json'时，如果是大写POST则传递json对象参数，
+如果为小写的则传递的是json字符串，即JSON.stringify(data)
+
+还有就是post请求的时候必须要有contentType类型，否则后台会接收不到，可将 contentType:"application/x-www-form-urlencoded; charset=UTF-8",
