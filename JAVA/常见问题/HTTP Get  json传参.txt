@@ -1,0 +1,14 @@
+首先要注意json的格式，
+
+{"id":"12","lon":117.138205,"lat":31.864219}
+
+
+数字类型的不能够加上双引号，若是字符类型的则需要加上双引号
+
+
+其次便是如果自己拼接的json字符串，则就有{ } 这两个字符，实际中发现不能够传递到后台，需要转义
+可在前台将 { } 替换，方法如下：
+
+var regexOne = new RegExp("{", "g");
+var regexTwo = new RegExp("}", "g");
+var param = crossIdList.replace(regexOne, "%7b").replace(regexTwo, "%7d");

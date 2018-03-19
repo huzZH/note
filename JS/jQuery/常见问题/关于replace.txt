@@ -1,0 +1,16 @@
+JS中的字符串替换replace，若通过某个字符来替换则只能够替换匹配的第一个字符串，
+若想替换所有的字符串需要先定义一个正则，然后使用正则，具体如下：
+
+
+普通的：
+
+var str = "aaaabbbbccc";
+str.replace("a", "m");
+结果：maaabbbbccc
+
+替换所有：
+
+var str = "aaabbbccc";RegExp
+var regex = new RegExp("a", "g");  g 表示global,即全部
+str.replace(regex, "m");
+结果：mmmbbbccc
