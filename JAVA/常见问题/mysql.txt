@@ -1,0 +1,21 @@
+mysql 远程连接数据库
+ mysql -h 192.168.1.101 -P 3306 -uroot -proot
+
+显示当前mysql 提供什么存储引擎
+show engines;
+
+查看当前使用的存储引擎
+show variables like '%storage_engine%';
+
+查看某一个表使用了什么引擎
+show create table 表名;
+
+查看mysql服务器上的版本
+select version();
+
+修改表引擎方法
+alter table table_name engine=innodb
+
+修改mysql默认引擎的方法
+1、找到mysql安装目录下的my.ini文件
+2、找到default-storage-engine=INNODB修改为default-storage-engine=MYISAM

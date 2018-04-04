@@ -1,0 +1,9 @@
+不能够直接使用css给画布的宽高赋值，否则会出现拉伸，
+
+只能够先获取到画布的JS对象，然后
+	var canvas = $("#progressbar").get(0);
+
+	canvas.width = 1000;
+	canvas.height = 110;
+
+只有这样才够实现不被拉伸的效果
